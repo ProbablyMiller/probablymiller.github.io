@@ -61,20 +61,36 @@ body::before {
     color: #58a6ff;
 }
 
-.nav-right {
+
+/* ========================= */
+/* SOCIAL ICONS */
+/* ========================= */
+
+.nav-right-icons {
     display: flex;
-    gap: 20px;
+    gap: 18px;
+    align-items: center;
 }
 
-.nav-right a {
-    font-size: 14px;
+.icon-link {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: #8b949e;
-    text-decoration: none;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
 }
 
-.nav-right a:hover {
+.icon-link svg {
+    fill: currentColor;
+    width: 20px;
+    height: 20px;
+}
+
+.icon-link:hover {
     color: #58a6ff;
+    transform: translateY(-2px);
 }
 
 
