@@ -1,20 +1,39 @@
-/* Yes, this is AI Generated - Stephen */
+/* ==================================== */
+/* Yes, this was AI Generated - Stephen */
+/* ==================================== */
+
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    background-color: #0d1117;
     color: #c9d1d9;
-
-    /* Subtle grid pattern */
-    background-image:
-        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
-        radial-gradient(circle at top left, rgba(88,166,255,0.08), transparent 50%);
-    
-    background-size: 40px 40px, 40px 40px, 100% 100%;
+    background-color: #0d1117;
+    overflow-x: hidden;
 }
 
+/* Animated ambient glow */
+body::before {
+    content: "";
+    position: fixed;
+    top: -200px;
+    left: -200px;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(88,166,255,0.15), transparent 70%);
+    z-index: -1;
+    animation: floatGlow 20s ease-in-out infinite alternate;
+}
+
+@keyframes floatGlow {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(80px, 40px); }
+    100% { transform: translate(-40px, 80px); }
+}
+
+
+/* ========================= */
 /* NAVBAR */
+/* ========================= */
+
 .navbar {
     background-color: #161b22;
     padding: 0 60px;
@@ -36,7 +55,11 @@ body {
     color: #58a6ff;
 }
 
+
+/* ========================= */
 /* DROPDOWN */
+/* ========================= */
+
 .dropdown {
     position: relative;
     display: inline-block;
@@ -66,15 +89,22 @@ body {
     display: block;
 }
 
+
+/* ========================= */
 /* HERO SECTION */
+/* ========================= */
+
 .hero {
     max-width: 900px;
     padding: 140px 60px;
 }
 
 .hero h1 {
-    font-size: 48px;
+    font-size: 52px;
     margin: 0;
+    background: linear-gradient(90deg, #ffffff, #58a6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .hero h2 {
@@ -92,7 +122,11 @@ body {
     max-width: 700px;
 }
 
+
+/* ========================= */
 /* BUTTONS */
+/* ========================= */
+
 .hero-buttons {
     margin-top: 40px;
 }
@@ -105,11 +139,13 @@ body {
     text-decoration: none;
     font-size: 14px;
     margin-right: 15px;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 10px rgba(35,134,54,0.4);
 }
 
 .btn-primary:hover {
     background-color: #2ea043;
+    transform: translateY(-2px);
 }
 
 .btn-secondary {
@@ -119,9 +155,22 @@ body {
     text-decoration: none;
     color: #c9d1d9;
     font-size: 14px;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .btn-secondary:hover {
     background-color: #21262d;
+    transform: translateY(-2px);
+}
+
+
+/* ========================= */
+/* SECTION DIVIDER */
+/* ========================= */
+
+.divider {
+    margin-top: 60px;
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #58a6ff, transparent);
 }
