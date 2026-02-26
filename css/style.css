@@ -1,11 +1,38 @@
+/* ========================= */
+/* GLOBAL */
+/* ========================= */
+
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
     color: #c9d1d9;
     background-color: #0d1117;
+    overflow-x: hidden;
 }
 
+/* Homepage animated glow */
+body.home::before {
+    content: "";
+    position: fixed;
+    top: -200px;
+    left: -200px;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(88,166,255,0.15), transparent 70%);
+    z-index: -1;
+    animation: floatGlow 20s ease-in-out infinite alternate;
+}
+
+@keyframes floatGlow {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(80px, 40px); }
+    100% { transform: translate(-40px, 80px); }
+}
+
+/* ========================= */
 /* NAVBAR */
+/* ========================= */
+
 .navbar {
     background-color: #161b22;
     padding: 0 60px;
@@ -19,45 +46,56 @@ body {
 .nav-left {
     display: flex;
     align-items: center;
-    gap: 25px;
+    gap: 30px;
 }
 
 .navbar a {
     color: #c9d1d9;
     text-decoration: none;
     font-size: 14px;
+    padding: 8px 0;
 }
 
 .navbar a:hover {
     color: #58a6ff;
 }
 
-/* DROPDOWN */
-.dropdown {
-    position: relative;
-}
+/* ========================= */
+/* SOCIAL ICONS */
+/* ========================= */
 
-.dropdown-content {
-    display: none;
-    position: absolute;
-    top: 65px;
-    left: 0;
-    background-color: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 6px;
-    min-width: 200px;
-    flex-direction: column;
-}
-
-.dropdown-content a {
-    padding: 12px 15px;
-}
-
-.dropdown:hover .dropdown-content {
+.nav-right-icons {
     display: flex;
+    gap: 20px;
+    align-items: center;
 }
 
-/* HERO */
+.icon-link {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8b949e;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.icon-link svg {
+    fill: currentColor;
+    width: 20px;
+    height: 20px;
+}
+
+.icon-link:hover {
+    color: #58a6ff;
+    transform: translateY(-2px);
+}
+
+/* ========================= */
+/* HERO SECTION */
+/* ========================= */
+
 .hero-container {
     padding: 140px 60px;
     max-width: 1100px;
@@ -87,7 +125,10 @@ body {
     margin-top: 30px;
 }
 
+/* ========================= */
 /* BUTTONS */
+/* ========================= */
+
 .btn-primary {
     background-color: #238636;
     color: white;
@@ -96,6 +137,7 @@ body {
     font-size: 14px;
     text-decoration: none;
     display: inline-block;
+    transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
@@ -110,13 +152,17 @@ body {
     text-decoration: none;
     color: #c9d1d9;
     display: inline-block;
+    transition: all 0.2s ease;
 }
 
 .btn-secondary:hover {
     background-color: #21262d;
 }
 
+/* ========================= */
 /* WRITEUPS */
+/* ========================= */
+
 .writeup-container {
     max-width: 850px;
     margin: 120px auto;
