@@ -1,38 +1,11 @@
-/* ========================= */
-/* GLOBAL STYLING */
-/* ========================= */
-
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
     color: #c9d1d9;
     background-color: #0d1117;
-    overflow-x: hidden;
 }
 
-/* Animated ambient glow */
-body::before {
-    content: "";
-    position: fixed;
-    top: -200px;
-    left: -200px;
-    width: 800px;
-    height: 800px;
-    background: radial-gradient(circle, rgba(88,166,255,0.15), transparent 70%);
-    z-index: -1;
-    animation: floatGlow 20s ease-in-out infinite alternate;
-}
-
-@keyframes floatGlow {
-    0% { transform: translate(0, 0); }
-    50% { transform: translate(80px, 40px); }
-    100% { transform: translate(-40px, 80px); }
-}
-
-/* ========================= */
 /* NAVBAR */
-/* ========================= */
-
 .navbar {
     background-color: #161b22;
     padding: 0 60px;
@@ -46,57 +19,45 @@ body::before {
 .nav-left {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 25px;
 }
 
 .navbar a {
     color: #c9d1d9;
     text-decoration: none;
-    padding: 20px 10px;
     font-size: 14px;
-    transition: color 0.2s ease;
 }
 
 .navbar a:hover {
     color: #58a6ff;
 }
 
-/* ========================= */
-/* SOCIAL ICONS */
-/* ========================= */
+/* DROPDOWN */
+.dropdown {
+    position: relative;
+}
 
-.nav-right-icons {
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 65px;
+    left: 0;
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    min-width: 200px;
+    flex-direction: column;
+}
+
+.dropdown-content a {
+    padding: 12px 15px;
+}
+
+.dropdown:hover .dropdown-content {
     display: flex;
-    gap: 18px;
-    align-items: center;
 }
 
-.icon-link {
-    width: 22px;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #8b949e;
-    text-decoration: none;
-    transition: all 0.2s ease;
-}
-
-.icon-link svg {
-    fill: currentColor;
-    width: 20px;
-    height: 20px;
-}
-
-.icon-link:hover {
-    color: #58a6ff;
-    transform: translateY(-2px);
-}
-
-/* ========================= */
-/* HERO SECTION */
-/* ========================= */
-
+/* HERO */
 .hero-container {
     padding: 140px 60px;
     max-width: 1100px;
@@ -105,14 +66,10 @@ body::before {
 .hero-text h1 {
     font-size: 56px;
     margin: 0;
-    background: linear-gradient(90deg, #ffffff, #58a6ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
 }
 
 .hero-text h2 {
     font-size: 22px;
-    font-weight: 400;
     color: #8b949e;
     margin-top: 12px;
 }
@@ -124,22 +81,25 @@ body::before {
     color: #8b949e;
 }
 
-/* ========================= */
-/* BUTTONS */
-/* ========================= */
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
 
+/* BUTTONS */
 .btn-primary {
     background-color: #238636;
     color: white;
     padding: 12px 22px;
     border-radius: 6px;
     font-size: 14px;
-    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
 }
 
 .btn-primary:hover {
     background-color: #2ea043;
-    transform: translateY(-2px);
 }
 
 .btn-secondary {
@@ -147,64 +107,25 @@ body::before {
     padding: 12px 22px;
     border-radius: 6px;
     font-size: 14px;
-    transition: all 0.2s ease;
+    text-decoration: none;
+    color: #c9d1d9;
+    display: inline-block;
 }
 
 .btn-secondary:hover {
     background-color: #21262d;
-    transform: translateY(-2px);
 }
 
-/* ========================= */
-/* WRITEUP PAGE */
-/* ========================= */
-
+/* WRITEUPS */
 .writeup-container {
     max-width: 850px;
     margin: 120px auto;
     padding: 0 40px;
 }
 
-.writeup-container h1 {
-    font-size: 34px;
-    margin-bottom: 10px;
-}
-
-.writeup-container h2 {
-    margin-top: 60px;
-    margin-bottom: 15px;
-    font-size: 22px;
-    border-bottom: 1px solid #30363d;
-    padding-bottom: 6px;
-}
-
-.divider {
-    margin: 50px 0;
-    border: none;
-    height: 1px;
-    background: linear-gradient(to right, transparent, #58a6ff, transparent);
-}
-
-/* ========================= */
-/* TERMINAL BLOCK */
-/* ========================= */
-
-.terminal-block {
-    background-color: #0d1117;
-    border: 1px solid #30363d;
+.writeup-card {
+    background-color: #161b22;
+    padding: 30px;
     border-radius: 8px;
-    padding: 20px;
-    margin: 30px 0;
-    overflow-x: auto;
-}
-
-.terminal-block img {
-    width: 100%;
-    border-radius: 6px;
-}
-
-.terminal-block pre {
-    margin: 0;
-    font-family: monospace;
-    font-size: 14px;
+    border: 1px solid #30363d;
 }
