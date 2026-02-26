@@ -1,1 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Internal | TryHackMe Writeup</title>
+<link rel="stylesheet" href="../css/style.css">
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="nav-left">
+        <a href="../index.html">Home</a>
+        <a href="index.html">Writeups</a>
+    </div>
+</div>
+
+<div class="writeup-container">
+
+<h1>Internal — TryHackMe Writeup</h1>
+<p class="writeup-meta">Platform: TryHackMe • Difficulty: Hard</p>
+
+<hr class="divider">
+
+<p>This will be my first “Hard” CTF, so let's get to it!</p>
+
+<p>Before anything, let's read our scope listed in the description of the CTF.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it1.png" target="_blank">
+<img src="images/internal/it1.png">
+</a>
+</div>
+
+<p>Alrighty, pretty simple stuff. We’re just looking for our normal two flags, “User”, and “Root”. It states we’re allowed to use whatever tools we want, and to only use the IP address assigned to our machine. Standard issue CTF.</p>
+
+<p>Alright, let’s load up the web page and see what we got here.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it2.png" target="_blank">
+<img src="images/internal/it2.png">
+</a>
+</div>
+
+<p>Looks like a basic Apache2 home page. Nothing interesting shown on this page, but let’s take a look at the page source to see if there’s anything hidden or interesting.</p>
+
+<p>As I expected, nothing interesting. Moving forwards onto enumeration!</p>
+
+<p>Let us run a basic nmap scan to see what ports are open, and if any are vulnerable.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it3.png" target="_blank">
+<img src="images/internal/it3.png">
+</a>
+</div>
+
+<p>Once again, nothing too interesting.</p>
+
+<p>Alright, let’s enumerate some directories via ffuf!</p>
+
+<div class="terminal-block">
+<a href="images/internal/it4.png" target="_blank">
+<img src="images/internal/it4.png">
+</a>
+</div>
+
+<p>A few things here! Blog, wordpress, javascript, and phpmyadmin. Before we go to the obvious one, let’s take a look at the others and see what we have.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it5.png" target="_blank">
+<img src="images/internal/it5.png">
+</a>
+</div>
+
+<p>Taking a look into /blog, it seems we have a basic blog post website. Note, it’s powered by WordPress. Before we try anything let’s visit the other pages.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it6.png" target="_blank">
+<img src="images/internal/it6.png">
+</a>
+</div>
+
+<p>Alrighty, /wordpress “can’t be found.” I’ll make note of this but for now let’s move on cause we don’t have an obvious attack surface right now.</p>
+
+<p>No access to /javascript, who would have guessed.</p>
+
+<p>Moving on to the obvious one, /phpmyadmin. Looks like we have a basic login portal presented to us by none other than “phpmyadmin”... We don’t have a username or a password yet, so trying to bruteforce would be useless right now.</p>
+
+<p>Let’s run searchsploit on phpmyadmin to see if we have any attack methods.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it7.png" target="_blank">
+<img src="images/internal/it7.png">
+</a>
+</div>
+
+<p>Ah, quite a few. Let me check the page source to see if we can find a version.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it8.png" target="_blank">
+<img src="images/internal/it8.png">
+</a>
+</div>
+
+<p>After running a quick CNTL + F and typing in VERSION, I found “PMA_VERSION: 4.6.6”. I’ll check to see if we have a vulnerability for this version.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it9.png" target="_blank">
+<img src="images/internal/it9.png">
+</a>
+</div>
+
+<p>These are the only ones noted on a “4.0” level, none being 4.6.6. We can run a quick google search to see if there's an exploit as well.</p>
+
+<p>After a lengthy search, I couldn’t find anything reliable. Since phpmyadmin normally has a /setup directory, let's see if we can reach it.</p>
+
+<p>Unreachable, but it exists, good to hear.</p>
+
+<p>I’ll run ffuf once more, on /phpmyadmin, to see if there's any more hidden directories behind this mystical login page.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it10.png" target="_blank">
+<img src="images/internal/it10.png">
+</a>
+</div>
+
+<p>We got a few more! I’ll save you the trouble of going through all of them, and just do it myself.</p>
+
+<p>Lovely, no access to any of them. The only one that stands out to me is /setup for now, as it’s asking for a basic HTTP login POST form. We NEED these credentials.</p>
+
+<p>After being distracted for too long on PMA and coming to the conclusion that we need to do something beforehand, I decided to run ffuf on /blog.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it11.png" target="_blank">
+<img src="images/internal/it11.png">
+</a>
+</div>
+
+<p>Aha, more content!</p>
+
+<p>After going to /wp-login.php, I inspected the page source and found that the website is being hosted on internals.thm. We need to add this to our /etc/hosts file to get the correct page output.</p>
+
+<p>Also noted from the page source, this login portal is using Wordpress 5.4.2.</p>
+
+<p>Before searching for vulnerabilities, we need to enumerate users.</p>
+
+<p>I used a funny little command for WordPress that Identifies users, service version, and some vulnerabilities!</p>
+
+<div class="terminal-block">
+<a href="images/internal/it12.png" target="_blank">
+<img src="images/internal/it12.png">
+</a>
+</div>
+
+<p>Here’s some good stuff we can note from this</p>
+
+<div class="terminal-block">
+<a href="images/internal/it13.png" target="_blank">
+<img src="images/internal/it13.png">
+</a>
+</div>
+
+<p>After a quick google search on xmlrpc, I got this definition</p>
+
+<p>“XML-RPC is a Remote Procedure Call (RPC) protocol that allows a client to call functions or methods on a remote server using HTTP as the transport layer and XML to encode the data. It is a simple, structured, and language-independent way to exchange data between applications, commonly used in API design, data integration, and notably within WordPress.”</p>
+
+<p>Hmmm, calling functions or methods on a remote server… interesting</p>
+
+<div class="terminal-block">
+<a href="images/internal/it14.png" target="_blank">
+<img src="images/internal/it14.png">
+</a>
+</div>
+
+<p>We can check that out</p>
+
+<p>After reading, I discovered that it’s just a basic webpage for some manager WordPress uses, nothing interesting.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it15.png" target="_blank">
+<img src="images/internal/it15.png">
+</a>
+</div>
+
+<p>Alright, lets move on and try bruteforcing now that we have a username.</p>
+
+<p>I had to use ChatGPT for the command on this part as I’m unfamiliar with XML-RPC, so here’s the script.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it16.png" target="_blank">
+<img src="images/internal/it16.png">
+</a>
+</div>
+
+<div class="terminal-block">
+<a href="images/internal/it17.png" target="_blank">
+<img src="images/internal/it17.png">
+</a>
+</div>
+
+<p>After giving it some time, we found a login! I spent some time enumerating other things while this script ran, but nothing really stood out to me. Let’s see where this login takes us.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it18.png" target="_blank">
+<img src="images/internal/it18.png">
+</a>
+</div>
+
+<p>Looks like we have a plugins page, nice. Maybe we can exploit this to spawn a user shell.</p>
+
+<p>Alrighty well after trying to upload a .php file, and a ZIP file, looks like they have it pretty locked down. Let me browse and see if we can find anything else.</p>
+
+<p>Okay, after some further snooping, I went to theme editor. Here, we can find a .css, and a .php file that we can both edit. SINCE we can edit the .php, I can probably pop a shell from this.</p>
+
+<p>Let me start a listener</p>
+
+<div class="terminal-block">
+<pre><code class="language-bash">
+nc -lvnp 4444
+</code></pre>
+</div>
+
+<p>After that, I made a shell with Reverse Shell Generator, and completely appended the functions.php file with my reverse shell. Now we’re in, but the page is broken and unrecoverable lol.</p>
+
+<p>Let us spawn a python shell</p>
+
+<div class="terminal-block">
+<pre><code class="language-bash">
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+</code></pre>
+</div>
+
+<div class="terminal-block">
+<a href="images/internal/it19.png" target="_blank">
+<img src="images/internal/it19.png">
+</a>
+</div>
+
+<p>Alright so it looks like there's permissions that we do not have. We need some credentials. We should read the config file that we enumerated earlier, this will probably have some credentials stored inside it.</p>
+
+<div class="terminal-block">
+<pre><code class="language-bash">
+cat /var/www/html/wordpress/wp-config.php
+</code></pre>
+</div>
+
+<div class="terminal-block">
+<a href="images/internal/it20.png" target="_blank">
+<img src="images/internal/it20.png">
+</a>
+</div>
+
+<p>Okay so we have SQL login credentials. Great, lets see if we can switch users to the one we didn’t have permissions for with the credentials we found in the config file. Lets load up SQL with the credentials.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it21.png" target="_blank">
+<img src="images/internal/it21.png">
+</a>
+</div>
+
+<p>Alright now that we’re in SQL, lets see if we can get any hashes.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it22.png" target="_blank">
+<img src="images/internal/it22.png">
+</a>
+</div>
+
+<p>Beautiful, we have a hash for the admin user. We need to crack this hash so we can potentially get escalated privileges. I was gonna write steps on how to crack this but I then realized that this is just the same password we found earlier. Moving on, lets check /opt for any hidden files.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it23.png" target="_blank">
+<img src="images/internal/it23.png">
+</a>
+</div>
+
+<p>wp-save.txt, interesting. Lets read this and see if it has anything important stored inside it.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it24.png" target="_blank">
+<img src="images/internal/it24.png">
+</a>
+</div>
+
+<p>Bingo. We found a password for the aurbeanna user. Lets switch to her user account and priv esc further.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it25.png" target="_blank">
+<img src="images/internal/it25.png">
+</a>
+</div>
+
+<p>BEAUTIFULLLLLL. Now we need root 😛 What’s jenkins.txt?</p>
+
+<div class="terminal-block">
+<a href="images/internal/it26.png" target="_blank">
+<img src="images/internal/it26.png">
+</a>
+</div>
+
+<p>Put in easy terms since I don’t quite understand what Jenkins is yet, jenkins is “basically a web-based automation engine.”</p>
+
+<p>We need to port forward jenkins to ourself, so lets run this command to do so.</p>
+
+<div class="terminal-block">
+<pre><code class="language-bash">
+ssh -L 8080:172.17.0.2:8080 aubreanna@internal.thm
+</code></pre>
+</div>
+
+<p>Next we enter aubreannas password. Pop open a localhost page on port 8080, and we should have a Jenkins login portal. http://localhost:8080</p>
+
+<div class="terminal-block">
+<a href="images/internal/it27.png" target="_blank">
+<img src="images/internal/it27.png">
+</a>
+</div>
+
+<p>I’m gonna start off here with some bruteforcing and see if we get anywhere.</p>
+
+<p>Using our handy dandy OWASP ZAP, I can open a proxy configured to ZAP and load up the page again.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it28.png" target="_blank">
+<img src="images/internal/it28.png">
+</a>
+</div>
+
+<p>Now it should be under sites. Lets send in some random credentials to the login page and view the post request.</p>
+
+<p>Attack > Fuzz</p>
+
+<div class="terminal-block">
+<a href="images/internal/it29.png" target="_blank">
+<img src="images/internal/it29.png">
+</a>
+</div>
+
+<p>We’re gonna try using “admin” as the username and see if we can get anywhere. I’m gonna select the “admin” field after j_password, and add a file to bruteforce with.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it30.png" target="_blank">
+<img src="images/internal/it30.png">
+</a>
+</div>
+
+<p>After adding rockyou.txt, we start fuzzing.</p>
+
+<p>From here, I sorted all the files by size, and found one that stood out from the others. This one right here, 310 bytes, different from all the rest.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it31.png" target="_blank">
+<img src="images/internal/it31.png">
+</a>
+</div>
+
+<p>Lets try this for the password</p>
+
+<div class="terminal-block">
+<a href="images/internal/it32.png" target="_blank">
+<img src="images/internal/it32.png">
+</a>
+</div>
+
+<p>And we’re in! Nice.</p>
+
+<p>I’m gonna look around this page and come back when I find something.</p>
+
+<p>Alright, after some time I found a “Script Console” where we can upload arbitrary scripts and run them. We can use this to our advantage and pop a shell most likely.</p>
+
+<p>Lets start another listener for this! nc -lvnp 1234</p>
+
+<p>I used Reverse Shell Generator and selected Groovy, as this script console uses groovy, to get a reverse shell script for this part.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it33.png" target="_blank">
+<img src="images/internal/it33.png">
+</a>
+</div>
+
+<p>Great. Not root, but we’re further in.</p>
+
+<p>After nearly an hour of searching through this god forbidden shell, I remembered that we checked /opt in an earlier step, so I decided to do so again.</p>
+
+<p>Inside of /opt, we find note.txt (yes, to put it into perspective of what i was going through, i included some lines to show you how bad i was struggling here LOL)</p>
+
+<div class="terminal-block">
+<a href="images/internal/it34.png" target="_blank">
+<img src="images/internal/it34.png">
+</a>
+</div>
+
+<p>It’s beautiful. Brings a tear to my eye quite frankly.</p>
+
+<p>Let me ssh into root.</p>
+
+<div class="terminal-block">
+<a href="images/internal/it35.png" target="_blank">
+<img src="images/internal/it35.png">
+</a>
+</div>
+
+<p>We did it! After quite some time (7 hours, yes, 7 hours) I found both flags.</p>
+
+<p>This challenge exposed me to a lot of new material, things I had never seen before. I had a blast figuring things out along the way, although I don’t think I ever want to look at a computer screen again for at least a week lol.</p>
+
+<p>I hope this writeup was of some use, visit my website @probablymiller.com and shoot me an email for any inquiries.</p>
+
+<p>It’s time I get some sleep now, goodnight.</p>
+
+<hr class="divider">
+
+<div style="margin-top:40px;">
+<a href="index.html" class="btn-secondary">← Back to Writeups</a>
+</div>
+
+</div>
+</body>
+</html>
