@@ -66,25 +66,25 @@ body.home::before {
 
 .nav-right-icons {
     display: flex;
-    gap: 20px;
     align-items: center;
+    gap: 20px;
 }
 
 .icon-link {
-    width: 22px;
-    height: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 28px;
+    height: 28px;
     color: #8b949e;
     text-decoration: none;
     transition: all 0.2s ease;
 }
 
 .icon-link svg {
-    fill: currentColor;
     width: 20px;
     height: 20px;
+    fill: currentColor;
 }
 
 .icon-link:hover {
