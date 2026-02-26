@@ -179,10 +179,10 @@ body.home::before {
 
 .terminal-block img {
     width: auto;
-    max-width: 100%;
+    max-width: min(100%, 800px); /* cap at a reasonable max */
     height: auto;
     display: block;
     margin: 0 auto;
-    image-rendering: -webkit-optimize-contrast; /* sharpens on Webkit */
+    image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
 }
