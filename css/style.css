@@ -175,3 +175,13 @@ body.home::before {
     border-radius: 8px;
     border: 1px solid #30363d;
 }
+
+.terminal-block {
+    text-align: center;
+}
+
+.terminal-block img {
+    max-width: 100%;
+    width: auto;
+    height: auto;
+}
