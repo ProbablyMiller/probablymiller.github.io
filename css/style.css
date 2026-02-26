@@ -176,12 +176,10 @@ body.home::before {
     border: 1px solid #30363d;
 }
 
-.terminal-block {
-    text-align: center;
-}
-
 .terminal-block img {
+    width: 512px;
     max-width: 100%;
-    width: auto;
     height: auto;
+    display: block;
+    margin: 0 auto;
 }
