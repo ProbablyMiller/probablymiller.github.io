@@ -1,5 +1,5 @@
 /* ========================= */
-/* GLOBAL */
+/* style.css */
 /* ========================= */
 
 body {
@@ -66,14 +66,11 @@ body.home::before {
 
 .nav-right-icons {
     display: flex;
-    gap: 20px;
     align-items: center;
     gap: 20px;
 }
 
 .icon-link {
-    width: 22px;
-    height: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -85,10 +82,96 @@ body.home::before {
 }
 
 .icon-link svg {
-    fill: currentColor;
     width: 20px;
     height: 20px;
     fill: currentColor;
 }
 
 .icon-link:hover {
+    color: #58a6ff;
+    transform: translateY(-2px);
+}
+
+/* ========================= */
+/* HERO SECTION */
+/* ========================= */
+
+.hero-container {
+    padding: 140px 60px;
+    max-width: 1100px;
+}
+
+.hero-text h1 {
+    font-size: 56px;
+    margin: 0;
+}
+
+.hero-text h2 {
+    font-size: 22px;
+    color: #8b949e;
+    margin-top: 12px;
+}
+
+.hero-text p {
+    margin-top: 30px;
+    font-size: 17px;
+    max-width: 750px;
+    color: #8b949e;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+/* ========================= */
+/* BUTTONS */
+/* ========================= */
+
+.btn-primary {
+    background-color: #238636;
+    color: white;
+    padding: 12px 22px;
+    border-radius: 6px;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #2ea043;
+}
+
+.btn-secondary {
+    border: 1px solid #30363d;
+    padding: 12px 22px;
+    border-radius: 6px;
+    font-size: 14px;
+    text-decoration: none;
+    color: #c9d1d9;
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #21262d;
+}
+
+/* ========================= */
+/* WRITEUPS */
+/* ========================= */
+
+.writeup-container {
+    max-width: 850px;
+    margin: 120px auto;
+    padding: 0 40px;
+}
+
+.writeup-card {
+    background-color: #161b22;
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid #30363d;
+}
