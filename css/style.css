@@ -174,4 +174,5 @@ body.home::before {
     padding: 30px;
     border-radius: 8px;
     border: 1px solid #30363d;
+    margin-bottom: 40px;
 }
