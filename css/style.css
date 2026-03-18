@@ -160,7 +160,7 @@ body.home::before {
 }
 
 /* ========================= */
-/* WRITEUPS */
+/* WRITEUPS / CARDS */
 /* ========================= */
 
 .writeup-container {
@@ -175,4 +175,61 @@ body.home::before {
     border-radius: 8px;
     border: 1px solid #30363d;
     margin-bottom: 40px;
+
+    /* NEW: smoother feel */
+    transition: all 0.25s ease;
+}
+
+/* NEW: hover animation */
+.writeup-card:hover {
+    transform: translateY(-6px);
+    border-color: #58a6ff;
+    box-shadow: 0 0 18px rgba(88,166,255,0.12);
+}
+
+/* NEW: title glow on hover */
+.writeup-card h2 {
+    margin-bottom: 10px;
+    transition: color 0.2s ease;
+}
+
+.writeup-card:hover h2 {
+    color: #58a6ff;
+}
+
+/* ========================= */
+/* EXPERIENCE PAGE */
+/* ========================= */
+
+/* Section headers */
+.exp-section {
+    margin-top: 50px;
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #8b949e;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Tech tags */
+.tags {
+    margin-top: 15px;
+}
+
+.tags span {
+    display: inline-block;
+    background-color: #0d1117;
+    color: #58a6ff;
+    padding: 5px 10px;
+    margin: 5px 6px 0 0;
+    font-size: 12px;
+    border-radius: 20px;
+    border: 1px solid #30363d;
+    transition: all 0.2s ease;
+}
+
+/* Tag hover */
+.tags span:hover {
+    background-color: #161b22;
+    border-color: #58a6ff;
 }
